@@ -22,6 +22,13 @@ let package = Package(
             name: "RagnarokLuaTests",
             dependencies: ["RagnarokLua"],
             resources: [
+                .copy("Resources/accessoryid.lub"),
+                .copy("Resources/accname.lub"),
+                .copy("Resources/iteminfo.lub"),
+                .copy("Resources/jobinheritlist.lub"),
+                .copy("Resources/skilldescript.lub"),
+                .copy("Resources/skillid.lub"),
+                .copy("Resources/skillinfolist.lub"),
                 .copy("Resources/test.lua"),
                 .copy("Resources/test.lub"),
             ]),

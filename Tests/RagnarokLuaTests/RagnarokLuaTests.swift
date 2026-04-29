@@ -59,4 +59,91 @@ struct RagnarokLuaTests {
         let unwrappedFunctionResult = try #require(functionResult as Bool?)
         #expect(unwrappedFunctionResult == true)
     }
+
+    @Test
+    func itemDescription() throws {
+        let iteminfoURL = try #require(Bundle.module.url(forResource: "iteminfo", withExtension: "lub"))
+        let iteminfo = try Data(contentsOf: iteminfoURL)
+
+        let context = LuaContext()
+        try context.load(iteminfo)
+        try context.parse("""
+        function itemDescription(itemID)
+            return tbl[itemID]["identifiedDescriptionName"]
+        end
+        """)
+
+        let redPortion = try context.call("itemDescription", with: [501]) as? [String]
+        let unwrappedRedPortion = try #require(redPortion)
+        #expect(unwrappedRedPortion.count == 3)
+    }
+
+    @Test
+    func skillDescription() throws {
+        let jobinheritlistURL = try #require(Bundle.module.url(forResource: "jobinheritlist", withExtension: "lub"))
+        let jobinheritlist = try Data(contentsOf: jobinheritlistURL)
+
+        let skillidURL = try #require(Bundle.module.url(forResource: "skillid", withExtension: "lub"))
+        let skillid = try Data(contentsOf: skillidURL)
+
+        let skillinfolistURL = try #require(Bundle.module.url(forResource: "skillinfolist", withExtension: "lub"))
+        let skillinfolist = try Data(contentsOf: skillinfolistURL)
+
+        let skilldescriptURL = try #require(Bundle.module.url(forResource: "skilldescript", withExtension: "lub"))
+        let skilldescript = try Data(contentsOf: skilldescriptURL)
+
+        let context = LuaContext()
+        try context.load(jobinheritlist)
+        try context.load(skillid)
+        try context.load(skillinfolist)
+        try context.load(skilldescript)
+        try context.parse("""
+        function skillDescription(skillID)
+            return SKILL_DESCRIPT[skillID]
+        end
+        """)
+
+        let basicSkill = try context.call("skillDescription", with: [1]) as? [String]
+        let unwrappedBasicSkill = try #require(basicSkill)
+        #expect(unwrappedBasicSkill.count == 23)
+    }
+
+    @Test
+    func accessoryName() throws {
+        let accessoryidURL = try #require(Bundle.module.url(forResource: "accessoryid", withExtension: "lub"))
+        let accessoryid = try Data(contentsOf: accessoryidURL)
+
+        let accnameURL = try #require(Bundle.module.url(forResource: "accname", withExtension: "lub"))
+        let accname = try Data(contentsOf: accnameURL)
+
+        let context = LuaContext()
+        try context.load(accessoryid)
+        try context.load(accname)
+        try context.parse("""
+        function accessoryName(accessoryID)
+            return AccNameTable[accessoryID]
+        end
+        """)
+
+        let nameOfGoggles = try context.call("accessoryName", with: [1]) as? String
+        let unwrappedNameOfGoggles = try #require(nameOfGoggles)
+        let convertedNameOfGoggles = unwrappedNameOfGoggles.data(using: .isoLatin1)?.string(using: .korean)
+        #expect(convertedNameOfGoggles == "_고글")
+    }
+}
+
+extension String.Encoding {
+    static let korean = String.Encoding(codepage: 949)
+
+    init(codepage: UInt32) {
+        let cfStringEncoding = CFStringConvertWindowsCodepageToEncoding(codepage)
+        let nsStringEncoding = CFStringConvertEncodingToNSStringEncoding(cfStringEncoding)
+        self.init(rawValue: nsStringEncoding)
+    }
+}
+
+extension Data {
+    func string(using encoding: String.Encoding) -> String? {
+        String(data: self, encoding: encoding)
+    }
 }

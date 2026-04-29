@@ -5,48 +5,58 @@
 //  Created by Leon Li on 2023/12/29.
 //
 
-import XCTest
+import Testing
 @testable import Lua
 
 // luac5.1.exe -o test.lub test.lua
 
-final class LuaTests: XCTestCase {
-    func testLuaDecompiler() throws {
-        let url = Bundle.module.url(forResource: "test", withExtension: "lub")!
+struct LuaTests {
+    @Test
+    func luaDecompiler() throws {
+        let url = try #require(Bundle.module.url(forResource: "test", withExtension: "lub"))
         let data = try Data(contentsOf: url)
 
         let decompiler = LuaDecompiler()
-        let decompiledData = decompiler.decompileData(data)
-        XCTAssertNotNil(decompiledData)
+        let decompiledData = try #require(decompiler.decompileData(data))
 
-        let decompiledString = String(data: decompiledData!, encoding: .utf8)!
-        XCTAssertTrue(decompiledString.contains("globalVar"))
+        let decompiledString = try #require(String(data: decompiledData, encoding: .utf8))
+        #expect(decompiledString.contains("globalVar"))
     }
 
-    func testLuaContext() throws {
-        let url = Bundle.module.url(forResource: "test", withExtension: "lua")!
+    @Test
+    func luaContext() throws {
+        let url = try #require(Bundle.module.url(forResource: "test", withExtension: "lua"))
         let string = try String(contentsOf: url, encoding: .utf8)
 
         let context = LuaContext()
         try context.parse(string)
 
-        XCTAssertEqual(context["globalVar"] as! Array<Double>, [0.0, 1.0])
+        let globalVar = try #require(context["globalVar"] as? [Double])
+        #expect(globalVar == [0.0, 1.0])
 
-        XCTAssertEqual(try context.call("myFunction", with: [0.5]) as! Bool, true)
+        let initialResult = try context.call("myFunction", with: [0.5]) as? Bool
+        let unwrappedInitialResult = try #require(initialResult as Bool?)
+        #expect(unwrappedInitialResult == true)
 
         context.setObject([0.2, 0.4], forKeyedSubscript: "globalVar" as NSString)
-        XCTAssertEqual(try context.call("myFunction", with: [0.5]) as! Bool, false)
+        let updatedResult = try context.call("myFunction", with: [0.5]) as? Bool
+        let unwrappedUpdatedResult = try #require(updatedResult as Bool?)
+        #expect(unwrappedUpdatedResult == false)
     }
 
-    func testLubContext() throws {
-        let url = Bundle.module.url(forResource: "test", withExtension: "lub")!
+    @Test
+    func lubContext() throws {
+        let url = try #require(Bundle.module.url(forResource: "test", withExtension: "lub"))
         let data = try Data(contentsOf: url)
 
         let context = LuaContext()
         try context.load(data)
 
-        XCTAssertEqual(context["globalVar"] as! Array<Double>, [0.0, 1.0])
+        let globalVar = try #require(context["globalVar"] as? [Double])
+        #expect(globalVar == [0.0, 1.0])
 
-        XCTAssertEqual(try context.call("myFunction", with: [0.5]) as! Bool, true)
+        let functionResult = try context.call("myFunction", with: [0.5]) as? Bool
+        let unwrappedFunctionResult = try #require(functionResult as Bool?)
+        #expect(unwrappedFunctionResult == true)
     }
 }

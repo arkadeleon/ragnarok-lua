@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LuaDecompiler : NSObject
 
-- (NSData * _Nullable)decompileData:(NSData *)data;
+- (nullable NSData *)decompileData:(NSData *)data;
 
 @end
 

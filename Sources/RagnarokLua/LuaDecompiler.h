@@ -1,6 +1,6 @@
 //
 //  LuaDecompiler.h
-//  Lua
+//  RagnarokLua
 //
 //  Created by Leon Li on 2023/12/29.
 //

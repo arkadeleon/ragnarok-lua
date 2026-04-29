@@ -1,16 +1,16 @@
 //
-//  LuaTests.swift
-//  LuaTests
+//  RagnarokLuaTests.swift
+//  RagnarokLuaTests
 //
 //  Created by Leon Li on 2023/12/29.
 //
 
 import Testing
-@testable import Lua
+@testable import RagnarokLua
 
 // luac5.1.exe -o test.lub test.lua
 
-struct LuaTests {
+struct RagnarokLuaTests {
     @Test
     func luaDecompiler() throws {
         let url = try #require(Bundle.module.url(forResource: "test", withExtension: "lub"))

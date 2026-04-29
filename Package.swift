@@ -4,23 +4,23 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-lua",
+    name: "ragnarok-lua",
     products: [
         .library(
-            name: "Lua",
-            targets: ["Lua"]),
+            name: "RagnarokLua",
+            targets: ["RagnarokLua"]),
     ],
     targets: [
         .target(
-            name: "Lua",
+            name: "RagnarokLua",
             cSettings: [
                 .headerSearchPath("lua"),
                 .headerSearchPath("luacompact53"),
                 .headerSearchPath("luadec"),
             ]),
         .testTarget(
-            name: "LuaTests",
-            dependencies: ["Lua"],
+            name: "RagnarokLuaTests",
+            dependencies: ["RagnarokLua"],
             resources: [
                 .copy("Resources/test.lua"),
                 .copy("Resources/test.lub"),

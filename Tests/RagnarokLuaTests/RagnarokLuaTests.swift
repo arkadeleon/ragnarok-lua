@@ -8,7 +8,13 @@
 import Testing
 @testable import RagnarokLua
 
-// luac5.1.exe -o test.lub test.lua
+// lua -> lub
+// Windows: luac5.1.exe -o test.lub test.lua
+// macOS: wine luac5.1.exe -o test.lub test.lua
+
+// lub -> lua
+// Windows: luadec5.1.exe test.lub > test.lua
+// macOS: wine luadec5.1.exe test.lub > test.lua
 
 struct RagnarokLuaTests {
     @Test
@@ -20,6 +26,7 @@ struct RagnarokLuaTests {
         let decompiledData = try #require(decompiler.decompileData(data))
 
         let decompiledString = try #require(String(data: decompiledData, encoding: .utf8))
+        print(decompiledString)
         #expect(decompiledString.contains("globalVar"))
     }
 

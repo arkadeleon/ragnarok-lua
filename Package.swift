@@ -8,7 +8,8 @@ let package = Package(
     products: [
         .library(
             name: "RagnarokLua",
-            targets: ["RagnarokLua"]),
+            targets: ["RagnarokLua"]
+        ),
     ],
     targets: [
         .target(
@@ -17,7 +18,8 @@ let package = Package(
                 .headerSearchPath("lua"),
                 .headerSearchPath("luacompact53"),
                 .headerSearchPath("luadec"),
-            ]),
+            ]
+        ),
         .testTarget(
             name: "RagnarokLuaTests",
             dependencies: ["RagnarokLua"],
@@ -31,6 +33,7 @@ let package = Package(
                 .copy("Resources/skillinfolist.lub"),
                 .copy("Resources/test.lua"),
                 .copy("Resources/test.lub"),
-            ]),
+            ]
+        ),
     ]
 )

@@ -79,8 +79,8 @@ You can load more than one Lua or `.lub` file into the same context.
 let data = try Data(contentsOf: url)
 
 let decompiler = LuaDecompiler()
-let sourceData = decompiler.decompileData(data)
-let source = sourceData.flatMap { String(data: $0, encoding: .utf8) }
+let sourceData = try decompiler.decompileData(data)
+let source = String(data: sourceData, encoding: .utf8)
 ```
 
 `LuaDecompiler` only supports Lua 5.1 bytecode.

@@ -9,9 +9,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+FOUNDATION_EXPORT NSErrorDomain const LuaDecompilerErrorDomain;
+
+typedef NS_ERROR_ENUM(LuaDecompilerErrorDomain, LuaDecompilerError) {
+    LuaDecompilerErrorIncompatibleVersion = 1,
+};
+
 @interface LuaDecompiler : NSObject
 
-- (nullable NSData *)decompileData:(NSData *)data;
+/// Decompiles Lua 5.1 bytecode data.
+/// - Parameters:
+///   - data: Lua bytecode data to decompile.
+///   - error: On return, contains `LuaDecompilerErrorIncompatibleVersion` if the bytecode version is unsupported.
+/// - Returns: Decompiled Lua source data, or `nil` if decompilation fails.
+- (nullable NSData *)decompileData:(NSData *)data error:(NSError **)error;
 
 @end
 

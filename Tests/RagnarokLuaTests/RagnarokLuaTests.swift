@@ -23,11 +23,26 @@ struct RagnarokLuaTests {
         let data = try Data(contentsOf: url)
 
         let decompiler = LuaDecompiler()
-        let decompiledData = try #require(decompiler.decompileData(data))
+        let decompiledData = try decompiler.decompileData(data)
 
         let decompiledString = try #require(String(data: decompiledData, encoding: .utf8))
         print(decompiledString)
         #expect(decompiledString.contains("globalVar"))
+    }
+
+    @Test
+    func luaDecompilerIncompatibleVersion() throws {
+        let data = Data([0x1b, 0x4c, 0x75, 0x61, 0x52])
+        let decompiler = LuaDecompiler()
+
+        do {
+            _ = try decompiler.decompileData(data)
+            Issue.record("Expected incompatible version error")
+        } catch {
+            let nsError = error as NSError
+            #expect(nsError.domain == LuaDecompilerErrorDomain)
+            #expect(nsError.code == LuaDecompilerError.incompatibleVersion.rawValue)
+        }
     }
 
     @Test

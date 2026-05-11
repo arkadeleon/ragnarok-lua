@@ -15,6 +15,8 @@
 
 extern lua_State* glstate;
 
+NSErrorDomain const LuaDecompilerErrorDomain = @"LuaDecompilerErrorDomain";
+
 @interface LuaDecompiler () {
     lua_State *l;
 }
@@ -37,9 +39,17 @@ extern lua_State* glstate;
     lua_close(l);
 }
 
-- (NSData *)decompileData:(NSData *)data {
+- (NSData *)decompileData:(NSData *)data error:(NSError **)error {
     // Only lua 5.1 is supported.
     if (data.length < 5 || ((uint8_t *)data.bytes)[4] != 0x51) {
+        if (error) {
+            NSDictionary<NSErrorUserInfoKey, id> *userInfo = @{
+                NSLocalizedDescriptionKey: @"Only Lua 5.1 bytecode can be decompiled."
+            };
+            *error = [NSError errorWithDomain:LuaDecompilerErrorDomain
+                                         code:LuaDecompilerErrorIncompatibleVersion
+                                     userInfo:userInfo];
+        }
         return nil;
     }
 
@@ -51,8 +61,8 @@ extern lua_State* glstate;
     Proto *f = c->l.p;
     char *code = luaU_decompile(f, 0);
 
-    NSData *output = [NSData dataWithBytesNoCopy:code length:strlen(code)];
-    return output;
+    NSData *decompiledData = [NSData dataWithBytesNoCopy:code length:strlen(code)];
+    return decompiledData;
 }
 
 @end
